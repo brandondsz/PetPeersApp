@@ -22,6 +22,56 @@ namespace PetPeers.Controllers
             return db.tblUsers;
         }
 
+        public string Login(string username, string password)
+        {
+            try
+            {
+                var user = db.tblUsers.FirstOrDefault(x => x.UserName == username);
+                if (user == null)
+                {
+                    throw new Exception($"Invalid UserName. User {username} does not exist.");
+                }
+
+                if (user.Password != password)
+                {
+                    throw new Exception($"Invalid Credentials please check your username and password.");
+                }
+                //add logic to signin
+                return "True";
+            } catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public IHttpActionResult Register(int id, tblUser tblUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.tblUsers.Add(tblUser);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateException)
+            {
+                if (tblUserExists(tblUser.UserId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtRoute("DefaultApi", new { id = tblUser.UserId }, tblUser);
+        }
+
         // GET: api/tblUsers/5
         [ResponseType(typeof(tblUser))]
         public IHttpActionResult GettblUser(long id)

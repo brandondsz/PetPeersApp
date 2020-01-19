@@ -22,6 +22,8 @@ namespace PetPeers.Controllers
         [HttpGet]
         public List<tblPet> GettblPets()
         {
+
+            db.Configuration.ProxyCreationEnabled = false;
             return db.tblPets.ToList();
         }
 
