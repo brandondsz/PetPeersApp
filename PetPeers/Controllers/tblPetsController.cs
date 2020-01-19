@@ -12,10 +12,10 @@ using PetPeers.Models;
 
 namespace PetPeers.Controllers
 {
-  // [Route("api")]
+    // [Route("api")]
     public class tblPetsController : ApiController
     {
-        
+
         private dbPetPeersEntities db = new dbPetPeersEntities();
 
         // GET: api/tblPets
@@ -24,25 +24,7 @@ namespace PetPeers.Controllers
         {
             return db.tblPets.ToList();
         }
-        [HttpPost]
-        public bool BuyPet(int petId, int userId)
-        {
-            var pet = db.tblPets.FirstOrDefault(x => x.PetId == petId);
 
-            pet.IsSold = true;
-
-            db.SaveChanges();
-
-            db.tblUserPetTransactions.Add(new tblUserPetTransaction
-            {
-                PetId = petId,
-                UserId = userId,
-                BuyDate = DateTime.Now,
-
-            });
-            db.SaveChanges();
-            return true;
-        }
         // GET: api/tblPets/5
         //[Route("api")]
         [ResponseType(typeof(tblPet))]
@@ -150,6 +132,26 @@ namespace PetPeers.Controllers
         private bool tblPetExists(long id)
         {
             return db.tblPets.Count(e => e.PetId == id) > 0;
+        }
+
+        [HttpPost]
+        public bool BuyPet(int petId, int userId)
+        {
+            var pet = db.tblPets.FirstOrDefault(x => x.PetId == petId);
+
+            pet.IsSold = true;
+
+            db.SaveChanges();
+
+            db.tblUserPetTransactions.Add(new tblUserPetTransaction
+            {
+                PetId = petId,
+                UserId = userId,
+                BuyDate = DateTime.Now,
+
+            });
+            db.SaveChanges();
+            return true;
         }
     }
 }
