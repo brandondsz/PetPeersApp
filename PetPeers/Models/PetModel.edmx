@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="dbPetPeersModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tblPets">
+          <Key>
+            <PropertyRef Name="PetId" />
+          </Key>
+          <Property Name="PetId" Type="bigint" Nullable="false" />
+          <Property Name="PetName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Age" Type="int" />
+          <Property Name="Place" Type="nvarchar" MaxLength="50" />
+          <Property Name="PetOwnerId" Type="bigint" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetime" />
+          <Property Name="IsSold" Type="bit" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'dbPetPeers.dbo.tblUserPetTransaction' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="tblUserPetTransaction">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="PetId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="BuyDate" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PetId" Type="bigint" Nullable="false" />
+          <Property Name="UserId" Type="bigint" Nullable="false" />
+          <Property Name="BuyDate" Type="datetimeoffset" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblUsers">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="bigint" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreatedDateTime" Type="datetime" />
+          <Property Name="LastLoggedInDateTime" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_tblUsers_tblPets">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
+          <End Role="tblPets" Type="Self.tblPets" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="tblPets">
+              <PropertyRef Name="PetOwnerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbPetPeersModelStoreContainer">
+          <EntitySet Name="tblPets" EntityType="Self.tblPets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblUsers" EntityType="Self.tblUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblUserPetTransaction" EntityType="Self.tblUserPetTransaction" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [tblUserPetTransaction].[Id] AS [Id], 
+    [tblUserPetTransaction].[PetId] AS [PetId], 
+    [tblUserPetTransaction].[UserId] AS [UserId], 
+    [tblUserPetTransaction].[BuyDate] AS [BuyDate]
+    FROM [dbo].[tblUserPetTransaction] AS [tblUserPetTransaction]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_tblUsers_tblPets" Association="Self.FK_tblUsers_tblPets">
+            <End Role="tblUsers" EntitySet="tblUsers" />
+            <End Role="tblPets" EntitySet="tblPets" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dbPetPeersModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tblPet">
+          <Key>
+            <PropertyRef Name="PetId" />
+          </Key>
+          <Property Name="PetId" Type="Int64" Nullable="false" />
+          <Property Name="PetName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Age" Type="Int32" />
+          <Property Name="Place" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PetOwnerId" Type="Int64" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="DateTime" Precision="3" />
+          <Property Name="IsSold" Type="Boolean" />
+          <NavigationProperty Name="tblUser" Relationship="Self.FK_tblUsers_tblPets" FromRole="tblPets" ToRole="tblUsers" />
+        </EntityType>
+        <EntityType Name="tblUser">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int64" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDateTime" Type="DateTime" Precision="3" />
+          <Property Name="LastLoggedInDateTime" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblPets" Relationship="Self.FK_tblUsers_tblPets" FromRole="tblUsers" ToRole="tblPets" />
+        </EntityType>
+        <EntityType Name="tblUserPetTransaction">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="PetId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="BuyDate" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PetId" Type="Int64" Nullable="false" />
+          <Property Name="UserId" Type="Int64" Nullable="false" />
+          <Property Name="BuyDate" Type="DateTimeOffset" Nullable="false" Precision="7" />
+        </EntityType>
+        <Association Name="FK_tblUsers_tblPets">
+          <End Role="tblUsers" Type="Self.tblUser" Multiplicity="1" />
+          <End Role="tblPets" Type="Self.tblPet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="tblPets">
+              <PropertyRef Name="PetOwnerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbPetPeersEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tblPets" EntityType="Self.tblPet" />
+          <EntitySet Name="tblUsers" EntityType="Self.tblUser" />
+          <EntitySet Name="tblUserPetTransactions" EntityType="Self.tblUserPetTransaction" />
+          <AssociationSet Name="FK_tblUsers_tblPets" Association="Self.FK_tblUsers_tblPets">
+            <End Role="tblUsers" EntitySet="tblUsers" />
+            <End Role="tblPets" EntitySet="tblPets" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dbPetPeersModelStoreContainer" CdmEntityContainer="dbPetPeersEntities">
+          <EntitySetMapping Name="tblPets">
+            <EntityTypeMapping TypeName="dbPetPeersModel.tblPet">
+              <MappingFragment StoreEntitySet="tblPets">
+                <ScalarProperty Name="PetId" ColumnName="PetId" />
+                <ScalarProperty Name="PetName" ColumnName="PetName" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="Place" ColumnName="Place" />
+                <ScalarProperty Name="PetOwnerId" ColumnName="PetOwnerId" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="IsSold" ColumnName="IsSold" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblUsers">
+            <EntityTypeMapping TypeName="dbPetPeersModel.tblUser">
+              <MappingFragment StoreEntitySet="tblUsers">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="LastLoggedInDateTime" ColumnName="LastLoggedInDateTime" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblUserPetTransactions">
+            <EntityTypeMapping TypeName="dbPetPeersModel.tblUserPetTransaction">
+              <MappingFragment StoreEntitySet="tblUserPetTransaction">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PetId" ColumnName="PetId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="BuyDate" ColumnName="BuyDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
